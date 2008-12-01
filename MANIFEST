@@ -1,0 +1,13 @@
+Changes
+MANIFEST
+README
+bin/sparkline
+lib/GD/LICENSE
+lib/GD/Sparkline.pm
+t/00-critic.t
+t/00-distribution.t
+t/00-pod.t
+t/00-podcoverage.t
+Makefile.PL
+Build.PL
+META.yml
