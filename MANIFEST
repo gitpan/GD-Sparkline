@@ -1,8 +1,10 @@
 Changes
+GD-Sparkline-0.01.tar.gz
+LICENSE
 MANIFEST
 README
 bin/sparkline
-lib/GD/LICENSE
+examples/ex1.pl
 lib/GD/Sparkline.pm
 t/00-critic.t
 t/00-distribution.t

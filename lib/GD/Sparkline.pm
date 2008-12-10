@@ -14,19 +14,20 @@ use base qw(Class::Accessor);
 use Readonly;
 use Math::Bezier;
 
-Readonly::Scalar our $H => 20;     # Height
-Readonly::Scalar our $W => 80;     # Width
+Readonly::Scalar our $H => 20;        # Height
+Readonly::Scalar our $W => 80;        # Width
+Readonly::Scalar our $T => 'b';       # Chart type
 Readonly::Scalar our $B => q[FFFFFF]; # Background
 Readonly::Scalar our $A => q[80D7B7]; # Area colour
 Readonly::Scalar our $L => q[000000]; # Line colour
 Readonly::Scalar our $BEZ_REZ => 10;
 
-our $VERSION = q[0.01];
+our $VERSION = q[0.02];
 
 __PACKAGE__->mk_accessors(__PACKAGE__->fields());
 
 sub fields {
-  return qw(p s h w b a l);
+  return qw(p s h w b a l t);
 }
 
 sub new {
@@ -74,17 +75,46 @@ sub draw {
     } split /,/smx, $series];
   }
 
-  my $h      = $self->h || $H;
-  my $w      = $self->w || $W;
+  my $h    = $self->h || $H;
+  my $w    = $self->w || $W;
   my $gd   = GD::Image->newTrueColor($w, $h);
   my $bg   = $gd->colorAllocate(map { hex $_ } unpack 'A2A2A2', $self->b || $B);
   my $area = $gd->colorAllocate(map { hex $_ } unpack 'A2A2A2', $self->a || $A);
   my $line = $gd->colorAllocate(map { hex $_ } unpack 'A2A2A2', $self->l || $L);
 
-  $gd->filledRectangle(0,0,$w,$h, $bg);
+  $gd->filledRectangle(0,0, $w,$h, $bg);
+
+  my $type = $self->t || $T;
+  my $func = "type_$type";
+
+  if($self->can($func)) {
+    $self->$func($gd, $p,
+		 {
+		  min => $min,
+		  max => $max,
+		 },
+		 {
+		  line => $line,
+		  area => $area,
+		  h    => $h,
+		  w    => $w,
+		 });
+  }
+
+  return $gd->png();
+}
+
+sub type_b {
+  my ($self, $gd, $p, $data_attrs, $chart_attrs) = @_;
+  my $min  = $data_attrs->{min};
+  my $max  = $data_attrs->{max};
+  my $line = $chart_attrs->{line};
+  my $area = $chart_attrs->{area};
+  my $h    = $chart_attrs->{h};
+  my $w    = $chart_attrs->{w};
 
   my $dy     = 0+$max-$min;
-  my $dx     = scalar @{$p};
+  my $dx     = scalar @{$p} - 1;
   my $scaley = $h/$dy;
   my $scalex = $w/$dx;
   my $pos    = 0;
@@ -100,8 +130,8 @@ sub draw {
     $pos++;
   }
 
-  my $bezier = Math::Bezier->new(@controls);
-  my $pointsa = $bezier->curve($w/$BEZ_REZ);
+  my $bezier  = Math::Bezier->new(@controls);
+  my $pointsa = $bezier->curve($w);#10000);#$w/$BEZ_REZ);
   my $pointsl = [@{$pointsa}];
 
   my ($lx, $ly) = splice @{$pointsa}, 0, 2;
@@ -129,7 +159,7 @@ sub draw {
     $ly = $y;
   }
 
-  return $gd->png();
+  return 1;
 }
 
 1;
@@ -167,6 +197,7 @@ $LastChangedRevision$
   b - background colour in 6-digit hex, default FFFFFF
   a - area colour in 6-digit hex
   l - line colour in 6-digit hex
+  t = b - bezier
 
  All are also available as get/set accessors
 
@@ -180,6 +211,13 @@ $LastChangedRevision$
 =head2 draw - generate and return PNG image from the dataset
 
   my $sPNG = $oSpark->draw();
+
+=head2 type_b - handling for bezier charts
+
+  $oSparkline->type_b($gd, $arDataPoints,
+                      { min  => $iMin, max => $iMax },
+                      { h    => $iHeight, w => $iWidth
+                        line => $oGDLineColour, area => $oGDAreaColour });
 
 =head1 DIAGNOSTICS
 

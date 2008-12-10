@@ -1,1 +1,4 @@
+0.02 Fixed off by one error
+     Extended to support different chart types using 't' param (t='b' by default)
+
 0.01 Initial release
