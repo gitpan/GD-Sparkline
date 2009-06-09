@@ -22,7 +22,7 @@ Readonly::Scalar our $A => q[80D7B7]; # Area colour
 Readonly::Scalar our $L => q[000000]; # Line colour
 Readonly::Scalar our $BEZ_REZ => 10;
 
-our $VERSION = q[0.02];
+our $VERSION = q[0.03];
 
 __PACKAGE__->mk_accessors(__PACKAGE__->fields());
 
@@ -49,7 +49,7 @@ sub draw {
   my ($min, $max);
 
   if($raw) {
-    $p = [map { ## no critic
+    $p = [map { ## no critic (ProhibitComplexMappings)
       if(!defined $min || $_<$min){
 	$min=$_;
       }
@@ -62,7 +62,7 @@ sub draw {
     } unpack q[C]x(length $raw), ($raw || q[])];
 
   } elsif($series) {
-    $p = [map { ## no critic
+    $p = [map { ## no critic (ProhibitComplexMappings)
       if(!defined $min || $_<$min){
 	$min=$_;
       }
@@ -110,13 +110,13 @@ sub type_b {
   my $max  = $data_attrs->{max};
   my $line = $chart_attrs->{line};
   my $area = $chart_attrs->{area};
-  my $h    = $chart_attrs->{h};
-  my $w    = $chart_attrs->{w};
+  my $h    = $chart_attrs->{h} || $H;
+  my $w    = $chart_attrs->{w} || $W;
 
   my $dy     = 0+$max-$min;
   my $dx     = scalar @{$p} - 1;
-  my $scaley = $h/$dy;
-  my $scalex = $w/$dx;
+  my $scaley = $h/($dy||1);
+  my $scalex = $w/($dx||1);
   my $pos    = 0;
 
   my $lastx = 0;

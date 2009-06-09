@@ -1,12 +1,12 @@
 ---
 name: GD-Sparkline
-version: 0.02
+version: 0.03
 author:
   - 'Roger M Pettett <rpettett@cpan.org>'
 abstract: 'GD::Sparkline - basic sparkline graphs'
 license: perl
 resources:
-  license: http://dev.perl.org/licenses/
+  license: ~
 requires:
   Carp: 1.08
   Class::Accessor: 0.31
@@ -22,8 +22,8 @@ build_requires:
 provides:
   GD::Sparkline:
     file: lib/GD/Sparkline.pm
-    version: 0.02
-generated_by: Module::Build version 0.280801
+    version: 0.03
+generated_by: Module::Build version 0.32
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html
   version: 1.2

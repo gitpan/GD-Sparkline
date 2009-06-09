@@ -14,13 +14,14 @@ use CGI;
 use Carp;
 use English qw(-no_match_vars);
 
-our $VERSION = do { my ($r) = q$Revision: 0.01 $ =~ /(\d+)/mx; $r; };
+our $VERSION = do { my ($r) = q$Revision: 0.01 $ =~ /(\d+)/smx; $r; };
 
 my $cgi = CGI->new();
-my $gd  = GD::Sparkline->new({
-			      map { $_ => $cgi->param($_) || q[] } GD::Sparkline->fields(), ## no critic
-			     });
+my $cfg = { map { $_ => $cgi->param($_) || q[] } GD::Sparkline->fields() };
+my $gd  = GD::Sparkline->new($cfg);
+
 if(!$cgi->param('suppress')) {
   print "Content-type:image/png\n\n" or croak $ERRNO;
 }
+
 print $gd->draw() or croak $ERRNO;

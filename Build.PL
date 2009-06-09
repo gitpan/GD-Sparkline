@@ -21,6 +21,7 @@ my $builder = Module::Build->new (
 					      },
 				  build_requires => {
 						     'Test::More' => 0,
+						     'IO::Scalar' => '2.110',
 						    },
 				  build_recommends => {
 						       'Test::Pod::Coverage' => '1.00',
