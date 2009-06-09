@@ -1,6 +1,6 @@
 ---
 name: GD-Sparkline
-version: 0.03
+version: 0.04
 author:
   - 'Roger M Pettett <rpettett@cpan.org>'
 abstract: 'GD::Sparkline - basic sparkline graphs'
@@ -18,11 +18,12 @@ requires:
   strict: 1.04
   warnings: 1.06
 build_requires:
+  IO::Scalar: 2.110
   Test::More: 0
 provides:
   GD::Sparkline:
     file: lib/GD/Sparkline.pm
-    version: 0.03
+    version: 0.04
 generated_by: Module::Build version 0.32
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

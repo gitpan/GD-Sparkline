@@ -22,7 +22,7 @@ Readonly::Scalar our $A => q[80D7B7]; # Area colour
 Readonly::Scalar our $L => q[000000]; # Line colour
 Readonly::Scalar our $BEZ_REZ => 10;
 
-our $VERSION = q[0.03];
+our $VERSION = q[0.04];
 
 __PACKAGE__->mk_accessors(__PACKAGE__->fields());
 
@@ -41,7 +41,7 @@ sub new {
   return $ref;
 }
 
-sub draw {
+sub draw { ## no critic (ProhibitExcessComplexity)
   my $self   = shift;
   my $raw    = $self->p();
   my $series = $self->s();
@@ -75,12 +75,22 @@ sub draw {
     } split /,/smx, $series];
   }
 
-  my $h    = $self->h || $H;
-  my $w    = $self->w || $W;
-  my $gd   = GD::Image->newTrueColor($w, $h);
-  my $bg   = $gd->colorAllocate(map { hex $_ } unpack 'A2A2A2', $self->b || $B);
+  my $h     = $self->h || $H;
+  my $w     = $self->w || $W;
+  my $gd    = GD::Image->newTrueColor($w, $h);
+  my $b_str = $self->b;
+
+  if($b_str eq 'transparent') {
+    $b_str = 'ffffff';
+  }
+
+  my $bg   = $gd->colorAllocate(map { hex $_ } unpack 'A2A2A2', $b_str || $B);
   my $area = $gd->colorAllocate(map { hex $_ } unpack 'A2A2A2', $self->a || $A);
   my $line = $gd->colorAllocate(map { hex $_ } unpack 'A2A2A2', $self->l || $L);
+
+  if($self->b eq 'transparent') {
+    $gd->transparent($bg);
+  }
 
   $gd->filledRectangle(0,0, $w,$h, $bg);
 
@@ -194,7 +204,7 @@ $LastChangedRevision$
   s - series data in comma-separated decimal
   h - height of image in pixels, default 20
   w - width of image in pixels, default 80
-  b - background colour in 6-digit hex, default FFFFFF
+  b - background colour in 6-digit hex or 'transparent', default FFFFFF
   a - area colour in 6-digit hex
   l - line colour in 6-digit hex
   t = b - bezier
