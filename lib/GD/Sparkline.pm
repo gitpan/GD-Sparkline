@@ -22,7 +22,7 @@ Readonly::Scalar our $A => q[80D7B7]; # Area colour
 Readonly::Scalar our $L => q[000000]; # Line colour
 Readonly::Scalar our $BEZ_REZ => 10;
 
-our $VERSION = q[0.04];
+our $VERSION = q[0.05];
 
 __PACKAGE__->mk_accessors(__PACKAGE__->fields());
 
@@ -148,7 +148,7 @@ sub type_b {
   while(scalar @{$pointsa}) {
     my ($x, $y) = splice @{$pointsa}, 0, 2;
 
-    my $poly = new GD::Polygon;
+    my $poly = GD::Polygon->new;
     $poly->addPt($lx, $ly);
     $poly->addPt($lx, $h);
     $poly->addPt($x, $h);
